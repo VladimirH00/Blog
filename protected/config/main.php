@@ -7,8 +7,8 @@ Yii::setPathOfAlias('bootstrap',dirname(__FILE__).'/../extensions/bootstrap');
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'My Web Application',
-
+	'name'=>'Blog',
+    'theme'=>'blog',
 	// preloading 'log' component
 	'preload'=>array('log'),
 
@@ -16,22 +16,29 @@ return array(
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
+        'application.widgets.bootstrap.*'
 	),
-    'theme'=>'bootstrap',
 	'modules'=>array(
 		// uncomment the following to enable the Gii tool
-		/*
+
 		'gii'=>array(
 			'class'=>'system.gii.GiiModule',
-			'password'=>'Enter Your Password Here',
+			'password'=>'1',
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
 			'ipFilters'=>array('127.0.0.1','::1'),
 		),
-		*/
+
 	),
 
 	// application components
 	'components'=>array(
+	    'authManager'=>array(
+	        'class'             =>  'CDbAuthManager',
+            'connectionID'      =>  'db',
+            'itemTable'         =>  'tbl_auth_item',
+            'itemChildTable'    =>  'tbl_auth_item_child',
+            'assignmentTable'   =>  'tbl_auth_assignment',
+        ),
         'bootstrap'=>array(
             'class'=>'bootstrap.components.Bootstrap'
         ),
