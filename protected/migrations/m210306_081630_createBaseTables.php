@@ -14,8 +14,8 @@ class m210306_081630_createBaseTables extends CDbMigration
         );
 	    $this->createTable('tbl_article', array(
             'id'            =>  'pk',
-            'author_id'     =>  'int(10) NOT NULL',
-            'category_id'   =>  'int(10) NOT NULL',
+            'authorid'     =>  'int(10) NOT NULL',
+            'categoryid'   =>  'int(10) NOT NULL',
             'name'          =>  'varchar(50) NOT NULL',
             'image'         =>  'varchar(250) NOT NULL',
             'anotation'     =>  'varchar(100) NOT NULL',
@@ -24,8 +24,8 @@ class m210306_081630_createBaseTables extends CDbMigration
         );
 	    $this->createTable('tbl_assignment_category_article', array(
 	        'id'            =>  'pk',
-            'article_id'    =>  'int(10) NOT NULL',
-            'category_id'   =>  'int(10) NOT NULL',
+            'articleid'    =>  'int(10) NOT NULL',
+            'categoryid'   =>  'int(10) NOT NULL',
             ),'ENGINE=InnoDB'
         );
 	    $this->createTable('tbl_author', array(
@@ -35,27 +35,27 @@ class m210306_081630_createBaseTables extends CDbMigration
             'patronymic'    =>  'varchar(50)',
             'login'         =>  'varchar(50) NOT NULL',
             'password'      =>  'varchar(255) NOT NULL',
-            'date_create'   =>  'datetime NOT NULL',
-            'date_update'   =>  'datetime NOT NULL',
+            'datecreate'   =>  'datetime NOT NULL',
+            'dateupdate'   =>  'datetime NOT NULL',
             ), 'ENGINE=InnoDB'
         );
 	    $this->createTable('tbl_assignment_author_article',array(
 	        'id'            =>  'pk',
-            'author_id'     =>  'int(10) NOT NULL',
-            'article_id'    =>  'int(10) NOT NULL',
+            'authorid'     =>  'int(10) NOT NULL',
+            'articleid'    =>  'int(10) NOT NULL',
             ),'ENGINE=InnoDB'
         );
 
 	    $this->addForeignKey('fk_assignment_category_article','tbl_assignment_category_article',
-            'article_id', 'tbl_article', 'id', 'CASCADE','CASCADE'
+            'articleid', 'tbl_article', 'id', 'CASCADE','CASCADE'
         );
         $this->addForeignKey('fk_assignment_category_category','tbl_assignment_category_article',
-            'category_id', 'tbl_category', 'id', 'CASCADE','CASCADE'
+            'categoryid', 'tbl_category', 'id', 'CASCADE','CASCADE'
         );
-        $this->addForeignKey('fk_assignment_author_article', 'tbl_assignment_author_article','article_id',
+        $this->addForeignKey('fk_assignment_author_article', 'tbl_assignment_author_article','articleid',
             'tbl_article', 'id', 'CASCADE', 'CASCADE'
         );
-        $this->addForeignKey('fk_assignment_author_author', 'tbl_assignment_author_article','author_id',
+        $this->addForeignKey('fk_assignment_author_author', 'tbl_assignment_author_article','authorid',
             'tbl_author', 'id', 'CASCADE', 'CASCADE'
         );
 	}
