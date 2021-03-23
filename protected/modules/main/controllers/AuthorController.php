@@ -62,18 +62,14 @@ class AuthorController extends Controller
 	public function actionRegister()
     {
         $model=new CreateAuthor;
-
-
-        if(isset($_POST['CreateAuthor']))
-        {
-            $tempMass = $_POST['CreateAuthor'];
-            $tempMass['datecreate'] =date('Y-m-d H:i:s');
-            $tempMass['dateupdate'] =date('Y-m-d H:i:s');
-            $model->attributes = $tempMass ;
-            if($model->save())
+        if(isset($_POST['CreateAuthor'])) {
+            $model->attributes = $_POST['CreateAuthor'];
+            $model->datecreate =date('Y-m-d H:i:s');
+            $model->dateupdate =date('Y-m-d H:i:s');
+            if($model->save()) {
                 $this->redirect(array('/site/login'));
+            }
         }
-
         $this->render('register',array(
             'model'=>$model,
         ));

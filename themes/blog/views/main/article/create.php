@@ -1,18 +1,17 @@
 <?php
 /* @var $this ArticleController */
+/* @var $modelImage UploadImage*/
 /* @var $model Article */
 
 $this->breadcrumbs=array(
-	'Articles'=>array('index'),
-	'Create',
+	'Статьи'=>array('/main/admin/article'),
+	'Создание',
 );
 
-$this->menu=array(
-	array('label'=>'List Article', 'url'=>array('index')),
-	array('label'=>'Manage Article', 'url'=>array('admin')),
-);
 ?>
 
-<h1>Create Article</h1>
+<h1>Создание статьи</h1>
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array(
+        'model'=>$model,
+)); ?>
