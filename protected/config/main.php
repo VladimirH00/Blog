@@ -8,19 +8,22 @@ Yii::setPathOfAlias('bootstrap',dirname(__FILE__).'/../extensions/bootstrap');
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'Blog',
+    'language'=>'ru',
     'theme'=>'blog',
+    'defaultController' => 'main/Article',
 	// preloading 'log' component
 	'preload'=>array('log'),
 
 	// autoloading model and component classes
 	'import'=>array(
 		'application.models.*',
+		'application.modules.*',
 		'application.components.*',
         'application.widgets.bootstrap.*'
 	),
 	'modules'=>array(
 		// uncomment the following to enable the Gii tool
-
+        'main',
 		'gii'=>array(
 			'class'=>'system.gii.GiiModule',
 			'password'=>'1',

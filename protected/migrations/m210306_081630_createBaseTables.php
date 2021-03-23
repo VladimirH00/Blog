@@ -15,7 +15,6 @@ class m210306_081630_createBaseTables extends CDbMigration
 	    $this->createTable('tbl_article', array(
             'id'            =>  'pk',
             'authorid'     =>  'int(10) NOT NULL',
-            'categoryid'   =>  'int(10) NOT NULL',
             'name'          =>  'varchar(50) NOT NULL',
             'image'         =>  'varchar(250) NOT NULL',
             'anotation'     =>  'varchar(100) NOT NULL',

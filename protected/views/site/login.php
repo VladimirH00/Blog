@@ -5,49 +5,66 @@
 
 $this->pageTitle=Yii::app()->name . ' - Login';
 $this->breadcrumbs=array(
-	'Login',
+	'Авторизация',
 );
 ?>
 
-<h1>Login</h1>
+<h1>Авторизация</h1>
 
-<p>Please fill out the following form with your login credentials:</p>
+<p>Пожалуйста, заполните следующую форму, чтобы авторизоваться:</p>
 
 <div class="form">
-<?php $form=$this->beginWidget('CActiveForm', array(
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	'id'=>'login-form',
+	'type'=>'horizontal',
 	'enableClientValidation'=>true,
 	'clientOptions'=>array(
 		'validateOnSubmit'=>true,
 	),
 )); ?>
 
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'username'); ?>
-		<?php echo $form->textField($model,'username'); ?>
-		<?php echo $form->error($model,'username'); ?>
-	</div>
+    <div class="control-group">
+	    <p class="note">Поля со <span class="required">*</span> являются обязательными.</p>
+    </div>
+    <div class="control-group">
+		<?php echo $form->labelEx($model,'username', array('class'=>'control-label')); ?>
+        <div class="controls">
+            <?php echo $form->textField($model,'username'); ?>
+            <?php echo $form->error($model,'username'); ?>
+        </div>
+    </div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'password'); ?>
-		<?php echo $form->passwordField($model,'password'); ?>
-		<?php echo $form->error($model,'password'); ?>
-		<p class="hint">
-			Hint: You may login with <kbd>demo</kbd>/<kbd>demo</kbd> or <kbd>admin</kbd>/<kbd>admin</kbd>.
-		</p>
-	</div>
+    <div class="control-group">
+		<?php echo $form->labelEx($model,'password', array('class'=>'control-label')); ?>
+        <div class="controls">
+            <?php echo $form->passwordField($model,'password'); ?>
+            <?php echo $form->error($model,'password'); ?>
+        </div>
+    </div>
 
-	<div class="row rememberMe">
-		<?php echo $form->checkBox($model,'rememberMe'); ?>
-		<?php echo $form->label($model,'rememberMe'); ?>
+    <div class="control-group">
+        <div class="controls">
+            <label class="checkbox">
+                <?php echo $form->checkBox($model,'rememberMe',array('class'=>'checkbox')); ?>
+                <?php echo $form->label($model,'rememberMe'); ?>
+            </label>
+        </div>
 		<?php echo $form->error($model,'rememberMe'); ?>
-	</div>
+    </div>
 
-	<div class="row buttons">
-		<?php echo CHtml::submitButton('Login'); ?>
-	</div>
+    <div class="control-group">
+        <div class="controls">
+		<?php $this->widget('bootstrap.widgets.TbButton', array(
+		    'label'         =>  'Логин',
+            'buttonType'    =>  'submit',
+        ))?>
+        <?php $this->widget('bootstrap.widgets.TbButton', array(
+            'label'=>'Регистрация',
+            'url'=>$this->createUrl('main/Author/register'),
+        )); ?>
+        </div>
+    </div>
 
 <?php $this->endWidget(); ?>
 </div><!-- form -->
