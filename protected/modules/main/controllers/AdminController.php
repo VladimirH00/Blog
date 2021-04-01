@@ -61,18 +61,10 @@ class AdminController extends CController
     }
     public function actionArticle()
     {
-        $criteria = new CDbCriteria();
-        $criteria->condition = 'authorid = :authorid';
-        $criteria->params = array(':authorid'=>Yii::app()->user->getId());
-        $dataProviderArticles = new CActiveDataProvider('Article', array(
-            'criteria'=>$criteria,
-            'pagination'=>array(
-                'pageSize'=>5,
-            ),
-        ));
-
+        $model = new Article();
+$model->authorid = Yii::app()->user->getId();
         $this->render('article', array(
-            'dataProviderArticles'=>$dataProviderArticles,
+            'dataProviderArticles'=>$model->searchForUser(),
         ));
     }
 

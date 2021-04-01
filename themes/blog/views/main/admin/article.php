@@ -1,4 +1,9 @@
-<?php /* @var $this Controller */ ?>
+<?php
+/**
+ * @var $this Controller
+ * @var $dataProviderArticles CActiveDataProvider
+ *
+ */ ?>
 
 <div class="container-fluid">
     <div class="row">
@@ -10,11 +15,11 @@
                 'columns' => array(
                     'id',
                     array(
-                        'name'=>'Автор',
+                        'name'=>'authorName',
                         'value'=>'$data->authorName',
                     ),
                     array(
-                        'name'=>'Категория',
+                        'name'=>'categories',
                         'value'=>'$data->categoryName',
                     ),
                     'name',

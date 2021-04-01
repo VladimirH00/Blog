@@ -3,7 +3,6 @@
 
 class ArticleController extends Controller
 {
-    private $COUNT_ARTICLE_ON_PAGE =6;
 
     public function filters()
     {
@@ -34,60 +33,27 @@ class ArticleController extends Controller
         );
     }
 
-    public function actionIndex()
+    public function actionIndex($category_id = null)
     {
-        $criteria = new CDbCriteria();
-
-        if (isset($_GET['category'])){
-            $criteria = new CDbCriteria();
-            $criteria->join ='left join `tbl_assignment_category_article` as `t2` on `t`.`id` = `t2`.`articleid`
-                                left join `tbl_category` as t3 on t2.categoryid = t3.id';
-            $criteria->condition = 'category = :category';
-            $criteria->params = array(
-                ':category'   => $_GET['category']
-            );
-        }
-        $model = Article::model()->findAll($criteria);
-        $dataProviderCategory = new CActiveDataProvider('Category');
-        $dataProviderArticle = new CActiveDataProvider('Article', array(
-            'criteria'      =>  $criteria,
-            'pagination'    =>  array(
-                'pageSize'=>$this->COUNT_ARTICLE_ON_PAGE,
-            ),
-        ));
+        $categories = Category::model()->findAll();
         $this->render('index', array(
-            'dataProviderCategory'=>$dataProviderCategory,
-            'dataProviderArticle'=>$dataProviderArticle,
+            'categories'=>$categories,
+            'dataProviderArticle'=>(new QueryArticle())->searchDataProviderArticleIndex($category_id),
         ));
     }
 
     public function actionCreate()
     {
         $model = new Article;
-
         if (isset($_POST['Article'])) {
-            $attributes = $_POST['Article'];
-            $imgFile = CUploadedFile::getInstance($model, 'imgFile');
-            $attributes['authorid'] = Yii::app()->user->getId();
-            $attributes['image'] = isset($imgFile) ? ($model->getLastArticle()['id'] . $imgFile->getName()) : 'error';
-            $model->attributes = $attributes;
-            $model->imgFile = $imgFile;
-            $transaction = Yii::app()->db->beginTransaction();
+            $model->attributes = $_POST['Article'];
+            $model->imgFile = CUploadedFile::getInstance($model, 'imgFile');
+            $model->image = isset($model->imgFile) ? ((new QueryArticle())->getLastArticle()['id'] . $model->imgFile->getName()) : 'error';
             if ($model->validate()) {
-                $model->upload($imgFile);
-                $compressedImage = new CompressedImage();
-                $compressedImage->resize_photo(Yii::app()->getBasePath() . '/../upload/', $model->image, $_FILES['Article']['size'], $_FILES['Article']['type']['imgFile']);
                 $model->save();
-                if (!AssignmentCategoryArticle::model()->addData($model)) {
-                    unlink(Yii::app()->getBasePath() . '/../upload/' . $model->image);
-                    $transaction->rollback();
-                    throw new CHttpException('404', 'Не удалось создать запись');
-                }
-                $transaction->commit();
                 $this->redirect($this->createUrl('/main/admin/article'));
             }
         }
-
         $this->render('create', array(
             'model' => $model,
             'isUpdate'=>false,
@@ -98,37 +64,14 @@ class ArticleController extends Controller
     {
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
-            $model = ArticleUpdate::model()->find('id=:id and authorid=:authorid', array(
-                ':id'=>$id,
-                ':authorid'=>Yii::app()->user->getId(),
-                ));
+            $model = ArticleUpdate::model()->findByAttributes(array('id'=>$id, 'authorid'=>Yii::app()->user->getId()));
             $model->categories = AssignmentCategoryArticle::model()->getData($_GET['id']);
             if (isset($_POST['ArticleUpdate'])) {
-                $attributes = $_POST['ArticleUpdate'];
-                $imgFile = CUploadedFile::getInstance($model, 'imgFile');
-                $attributes['authorid'] = Yii::app()->user->getId();
-                $attributes['image'] = isset($imgFile) ? $imgFile->getName() : $model->getImageName();
-                $model->attributes = $attributes;
-                $model->imgFile = $imgFile;
-                $transaction = Yii::app()->db->beginTransaction();
+                $model->attributes = $_POST['ArticleUpdate'];
+                $model->imgFile = CUploadedFile::getInstance($model, 'imgFile');
+                $model->image = isset($model->imgFile) ? (new QueryArticle())->getLastArticle()['id'] . $model->imgFile->getName() : $model->getImageName();
                 if ($model->update()) {
-                    if (isset($model->imgFile)) {
-                        $model->upload($imgFile);
-                        $compressedImage = new CompressedImage();
-                        $compressedImage->resize_photo(Yii::app()->getBasePath() . '/../upload/', $model->image, $_FILES['Article']['size'], $_FILES['Article']['type']['imgFile']);
-                    }
-                    if (!AssignmentCategoryArticle::model()->addData($model)) {
-                        if (isset($model->imgFile)) {
-                            unlink(Yii::app()->getBasePath() . '/../upload/' . $model->image);
-                        }
-                        $transaction->rollback();
-                        throw new CHttpException('404', 'Не удалось создать запись');
-                    }
-                    $transaction->commit();
-                    //Yii::app()->set
                     $this->redirect($this->createUrl('/main/article/update&id=' . $_GET['id']));
-                }else{
-                    throw new CHttpException('404', 'Не удалось изменить запись');
                 }
             }
             if (isset($model)) {
@@ -137,10 +80,10 @@ class ArticleController extends Controller
                     'isUpdate' =>true,
                 ));
             } else {
-                throw new CHttpException('404');
+                throw new CHttpException('404', "Выбранная статья не найдена");
             }
         } else {
-            throw new CHttpException('404');
+            throw new CHttpException('404', "Статья не найдена");
         }
     }
 
@@ -149,21 +92,14 @@ class ArticleController extends Controller
 
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
-            $model = Article::model()->find('id = :id and authorid = :authorid', array(
-                ':id' => $id,
-                ':authorid' => Yii::app()->user->getId(),
-            ));
+            $model = Article::model()->findByAttributes(array('id'=>$id, 'authorid'=>Yii::app()->user->getId()));
             if (isset($model)) {
-                unlink(Yii::app()->getBasePath() . '/../upload/' . $model->image);
-                if (is_file(Yii::app()->getBasePath() . '/../upload/compressedImage' . $model->image)) {
-                    unlink(Yii::app()->getBasePath() . '/../upload/' . $model->image);
-                }
                 $model->delete();
             } else {
-                throw new CHttpException('404');
+                throw new CHttpException('404', 'Статью не удалось удалить');
             }
         } else {
-            throw new CHttpException('404');
+            throw new CHttpException('404','Статья не найдена');
         }
     }
 
@@ -171,9 +107,8 @@ class ArticleController extends Controller
     {
         if (isset($_GET['id'])) {
 
-            $model = Article::model()->find('id=:id', array(':id' => $_GET['id']));
+            $model = Article::model()->findByAttributes(array('id'=>$_GET['id']));
             if (isset($model)) {
-
                 $this->render('_view', array(
                     'model'         => $model,
                     'breadcrumbs'   => array(
@@ -193,9 +128,8 @@ class ArticleController extends Controller
     {
         if (isset($_GET['id'])) {
 
-            $model = Article::model()->find('id=:id', array(':id' => $_GET['id']));
+            $model = Article::model()->findByAttributes(array('id'=>$_GET['id']));
             if (isset($model)) {
-
                 $this->render('_view', array(
                     'model'         => $model,
                     'breadcrumbs'   => array(
@@ -210,7 +144,4 @@ class ArticleController extends Controller
             throw new CHttpException('404', 'Статья не найдена');
         }
     }
-
-
-
 }

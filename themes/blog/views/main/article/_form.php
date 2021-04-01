@@ -25,7 +25,7 @@
 
     <div class="row checkbox">
         <?php echo $form->labelEx($model, 'categories'); ?>
-        <?php echo $form->checkBoxList($model, 'categories', $model->getCategories()); ?>
+        <?php echo $form->checkBoxList($model, 'categories', (new QueryCategory())->getCategories()); ?>
         <?php echo $form->error($model, 'categories'); ?>
     </div>
 

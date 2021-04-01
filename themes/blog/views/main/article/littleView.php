@@ -13,7 +13,7 @@
                 <td><h3><?=$model->name ?></h3></td>
             </tr>
             <tr>
-                <td><p><?=$model->anotation ?></p></td>
+                <td><p style="width: 40%"><?=$model->anotation ?></p></td>
             </tr>
         </table>
     </a>

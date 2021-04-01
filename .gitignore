@@ -2,3 +2,4 @@
 *.log
 #Ignore IDE specific files
 .idea/
+upload/

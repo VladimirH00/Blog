@@ -103,7 +103,6 @@ class AssignmentCategoryArticle extends CActiveRecord
 
 	public function addData($modelArticle)
     {
-        $model = AssignmentCategoryArticle::model()->findAll('articleid=:articleid', array(':articleid'=>$modelArticle['id']));
         $model = AssignmentCategoryArticle::model()->findAllByAttributes(array('articleid' => $modelArticle['id']));
         if (isset($model)){
             foreach ($model as $value){
@@ -123,7 +122,7 @@ class AssignmentCategoryArticle extends CActiveRecord
 
     public function getData($idArticle)
     {
-        $model = AssignmentCategoryArticle::model()->findAll('articleid=:articleid', array(':articleid'=>$idArticle));
+        $model = AssignmentCategoryArticle::model()->findAllByAttributes(array('articleid'=>$idArticle));
         $arr = array();
        foreach ($model as $value){
            $arr[] = $value->category->id;
